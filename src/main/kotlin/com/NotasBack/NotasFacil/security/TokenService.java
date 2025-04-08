@@ -30,7 +30,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("notas faceis")
+                    .withIssuer("notas faceis!")
                     .withSubject(professor.getEmail())
                     .withExpiresAt(this.generateTokenExpiration())
                     .sign(algorithm);
@@ -60,7 +60,7 @@ public class TokenService {
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("notas faceis")
+                    .withIssuer("notas faceis!")
                     .build()
                     .verify(token)
                     .getSubject();

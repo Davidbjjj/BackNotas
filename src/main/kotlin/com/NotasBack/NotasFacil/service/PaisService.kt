@@ -37,7 +37,7 @@ class PaisService (private val paisRepository: PaisRepository, private val aluno
     fun listar(): List<Pais> = paisRepository.findAll()
 
     fun buscarPorId(id: UUID): Pais = paisRepository.findById(id).orElseThrow {
-        NoSuchElementException("Professor não encontrado")
+        NoSuchElementException("Pai não encontrado")
     }
 
     fun atualizar(id: UUID, request: PaisRequest): Pais {

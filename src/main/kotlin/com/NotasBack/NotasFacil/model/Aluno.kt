@@ -21,5 +21,9 @@ data class Aluno(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    val professor: Professor? = null
-)
+    val professor: Professor? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "pais_id")
+    val pais: Pais? = null
+    )

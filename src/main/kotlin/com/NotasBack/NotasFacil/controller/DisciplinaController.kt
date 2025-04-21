@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/api/disciplinas")
+@RequestMapping("/disciplinas")
 class DisciplinaController(private val service: DisciplinaService) {
 
-    // --- CRUD Básico ---
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun criarDisciplina(@Valid @RequestBody dto: DisciplinaDTO): DisciplinaResponseDTO {
@@ -75,8 +74,7 @@ class DisciplinaController(private val service: DisciplinaService) {
             AlunoResponseDTO(id = it.id, nome = it.nome)
         }
     }
-
-    // --- Utils ---
+    
     private fun toResponseDTO(disciplina: Disciplina): DisciplinaResponseDTO {
         return DisciplinaResponseDTO(
             id = disciplina.id,

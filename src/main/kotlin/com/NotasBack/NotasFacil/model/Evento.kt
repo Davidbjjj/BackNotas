@@ -1,7 +1,6 @@
-package com.NotasBack.NotasFacil
+package com.NotasBack.NotasFacil.model
 
-import com.NotasBack.NotasFacil.model.Aluno
-import com.NotasBack.NotasFacil.model.Disciplina
+
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*

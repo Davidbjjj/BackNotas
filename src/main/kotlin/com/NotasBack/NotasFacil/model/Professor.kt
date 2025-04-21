@@ -15,8 +15,8 @@ data class Professor(
 
     val senha: String,
 
-    @ElementCollection
-    val disciplinas: List<String> = listOf(),
+    @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL])
+    val disciplinas: MutableList<Disciplina> = mutableListOf(),
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val alunos: List<Aluno> = listOf()

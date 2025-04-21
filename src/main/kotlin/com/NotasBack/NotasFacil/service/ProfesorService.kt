@@ -1,22 +1,28 @@
 package com.NotasBack.NotasFacil.service
-
 import com.NotasBack.NotasFacil.DTO.ProfessorRequest
 import com.NotasBack.NotasFacil.model.Professor
+import com.NotasBack.NotasFacil.model.Disciplina
 import com.NotasBack.NotasFacil.repository.ProfessorRepository
+import com.NotasBack.NotasFacil.repository.DisciplinaRepository
+import com.NotasBack.NotasFacil.service.PasswordUtils
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class ProfessorService(
-    private val repository: ProfessorRepository
+    private val repository: ProfessorRepository,
+    private val disciplinaRepository: DisciplinaRepository
 ) {
     fun criar(request: ProfessorRequest): Professor {
+        val disciplinas: MutableList<Disciplina> = disciplinaRepository.findAllById(request.disciplinasIds).toMutableList()
+
         val professor = Professor(
             nome = request.nome,
             email = request.email,
             senha = PasswordUtils.encode(request.senha),
-            disciplinas = request.disciplinas
+            disciplinas = disciplinas
         )
+
         return repository.save(professor)
     }
 
@@ -27,13 +33,16 @@ class ProfessorService(
     }
 
     fun atualizar(id: UUID, request: ProfessorRequest): Professor {
+        val disciplinas: MutableList<Disciplina> = disciplinaRepository.findAllById(request.disciplinasIds).toMutableList()
         val existente = buscarPorId(id)
+
         val atualizado = existente.copy(
             nome = request.nome,
             email = request.email,
             senha = PasswordUtils.encode(request.senha),
-            disciplinas = request.disciplinas
+            disciplinas = disciplinas
         )
+
         return repository.save(atualizado)
     }
 
@@ -41,4 +50,3 @@ class ProfessorService(
         repository.deleteById(id)
     }
 }
-

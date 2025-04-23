@@ -31,7 +31,7 @@ class EventoController(private val service: EventoService) {
         return toResponseDTO(service.adicionarAluno(eventoId, alunoId))
     }
 
-    // --- Utils ---
+     
     private fun toResponseDTO(evento: Evento): EventoResponseDTO {
         return EventoResponseDTO(
             id = evento.id,

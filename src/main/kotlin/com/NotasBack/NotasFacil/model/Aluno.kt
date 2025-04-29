@@ -21,5 +21,17 @@ data class Aluno(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    val professor: Professor? = null
+    val professor: Professor? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "pais_id")
+    val pais: Pais? = null,
+
+    @ManyToMany
+    @JoinTable(
+        name = "aluno_disciplina",
+        joinColumns = [JoinColumn(name = "aluno_id")],
+        inverseJoinColumns = [JoinColumn(name = "disciplina_id")]
+    )
+    val disciplinas: MutableList<Disciplina> = mutableListOf() // Disciplinas matriculadas
 )

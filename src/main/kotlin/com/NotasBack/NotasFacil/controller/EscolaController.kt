@@ -1,20 +1,19 @@
 package com.NotasBack.NotasFacil.controller
 
-import com.NotasBack.NotasFacil.DTO.AlunoRequest
-import com.NotasBack.NotasFacil.service.AlunoService
+import com.NotasBack.NotasFacil.DTO.EscolaRequest
+import com.NotasBack.NotasFacil.service.EscolaService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/alunos")
-class AlunoController(
-    private val service: AlunoService
+@RequestMapping("/escolas")
+class EscolaController (
+    private val service: EscolaService
 ) {
     @PostMapping
-    fun criar(@RequestBody request: AlunoRequest) =
-        ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
+    fun criar (@RequestBody request: EscolaRequest) = ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
 
     @GetMapping
     fun listar() = ResponseEntity.ok(service.listar())
@@ -23,8 +22,7 @@ class AlunoController(
     fun buscar(@PathVariable id: UUID) = ResponseEntity.ok(service.buscarPorId(id))
 
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id: UUID, @RequestBody request: AlunoRequest) =
-        ResponseEntity.ok(service.atualizar(id, request))
+    fun atualizar(@PathVariable id:UUID, @RequestBody request: EscolaRequest) = ResponseEntity.ok(service.atualizar(id, request))
 
     @DeleteMapping("/{id}")
     fun deletar(@PathVariable id: UUID): ResponseEntity<Void> {
@@ -32,4 +30,3 @@ class AlunoController(
         return ResponseEntity.noContent().build()
     }
 }
-

@@ -7,6 +7,7 @@ import com.NotasBack.NotasFacil.model.*
 import com.NotasBack.NotasFacil.repository.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -49,4 +50,12 @@ class EventoService(
         evento.alunos.add(aluno)
         return eventoRepository.save(evento)
     }
+    fun buscarEventosPorDataEDisciplina(data: LocalDate, disciplinaId: UUID): List<Evento> {
+        return eventoRepository.findByDataBetweenAndDisciplina_Id(
+            data.atStartOfDay(),
+            data.plusDays(1).atStartOfDay(),
+            disciplinaId
+        )
+    }
 }
+

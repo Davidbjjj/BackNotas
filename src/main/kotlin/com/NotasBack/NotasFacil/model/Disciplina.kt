@@ -1,6 +1,7 @@
 package com.NotasBack.NotasFacil.model
 
 import com.NotasBack.NotasFacil.Evento
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 import java.util.*
 
@@ -13,7 +14,8 @@ data class Disciplina(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    var professor: Professor, // Disciplina é ministrada por um professor
+    @JsonBackReference // Evita a serialização recursiva
+    var professor: Professor,
 
     @ManyToMany(mappedBy = "disciplinas")
     val alunos: MutableList<Aluno> = mutableListOf(), // Alunos matriculados

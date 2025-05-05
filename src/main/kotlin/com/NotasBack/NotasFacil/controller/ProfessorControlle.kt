@@ -14,19 +14,30 @@ import java.util.*
 class ProfessorController(
     private val service: ProfessorService
 ) {
+
     @PostMapping
-    fun criar(@RequestBody request: ProfessorRequest) =
-        ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
+    fun criar(@RequestBody request: ProfessorRequest): ResponseEntity<Professor> {
+        val professor = service.criar(request)
+        return ResponseEntity.status(HttpStatus.CREATED).body(professor)
+    }
 
     @GetMapping
-    fun listar() = ResponseEntity.ok(service.listar())
+    fun listar(): ResponseEntity<List<Professor>> {
+        return ResponseEntity.ok(service.listar())
+    }
 
     @GetMapping("/{id}")
-    fun buscar(@PathVariable id: UUID) = ResponseEntity.ok(service.buscarPorId(id))
+    fun buscar(@PathVariable id: UUID): ResponseEntity<Professor> {
+        return ResponseEntity.ok(service.buscarPorId(id))
+    }
 
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id: UUID, @RequestBody request: ProfessorRequest) =
-        ResponseEntity.ok(service.atualizar(id, request))
+    fun atualizar(
+        @PathVariable id: UUID,
+        @RequestBody request: ProfessorRequest
+    ): ResponseEntity<Professor> {
+        return ResponseEntity.ok(service.atualizar(id, request))
+    }
 
     @DeleteMapping("/{id}")
     fun deletar(@PathVariable id: UUID): ResponseEntity<Void> {
@@ -34,4 +45,5 @@ class ProfessorController(
         return ResponseEntity.noContent().build()
     }
 }
+
 

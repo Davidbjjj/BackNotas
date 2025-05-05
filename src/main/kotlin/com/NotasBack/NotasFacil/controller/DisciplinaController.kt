@@ -74,7 +74,7 @@ class DisciplinaController(private val service: DisciplinaService) {
             AlunoResponseDTO(id = it.id, nome = it.nome)
         }
     }
-    
+
     private fun toResponseDTO(disciplina: Disciplina): DisciplinaResponseDTO {
         return DisciplinaResponseDTO(
             id = disciplina.id,

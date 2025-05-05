@@ -1,6 +1,5 @@
 package com.NotasBack.NotasFacil.model
 
-import com.NotasBack.NotasFacil.Evento
 import jakarta.persistence.*
 import java.util.*
 

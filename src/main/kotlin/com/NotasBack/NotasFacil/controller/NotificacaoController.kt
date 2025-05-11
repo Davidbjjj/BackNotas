@@ -1,4 +1,4 @@
-public class kt {
+
     package com.NotasBack.NotasFacil.controller
 
     import com.NotasBack.NotasFacil.model.Notificacao
@@ -35,5 +35,4 @@ public class kt {
             else ResponseEntity.notFound().build()
         }
     }
-    
-}
+

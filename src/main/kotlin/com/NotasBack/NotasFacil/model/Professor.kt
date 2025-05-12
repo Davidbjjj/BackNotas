@@ -1,6 +1,6 @@
 package com.NotasBack.NotasFacil.model
 
-import com.fasterxml.jackson.annotation.JsonManagedReference
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.*
 import java.util.*
 
@@ -17,10 +17,10 @@ data class Professor(
     val senha: String,
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL])
-    @JsonManagedReference
+    @JsonIgnoreProperties("professor", "alunos", "eventos")
     val disciplinas: MutableList<Disciplina> = mutableListOf(),
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnoreProperties("professor", "disciplinas", "pais")
     val alunos: List<Aluno> = listOf()
 )

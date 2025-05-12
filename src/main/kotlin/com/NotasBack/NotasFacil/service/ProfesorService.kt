@@ -14,7 +14,9 @@ class ProfessorService(
     private val disciplinaRepository: DisciplinaRepository
 ) {
     fun criar(request: ProfessorRequest): Professor {
-        val disciplinas: MutableList<Disciplina> = disciplinaRepository.findAllById(request.disciplinasIds).toMutableList()
+        val disciplinas: MutableList<Disciplina> =
+            disciplinaRepository.findAllById(request.disciplinasIds.map { UUID.fromString(it) }).toMutableList()
+
 
         val professor = Professor(
             nome = request.nome,
@@ -33,7 +35,9 @@ class ProfessorService(
     }
 
     fun atualizar(id: UUID, request: ProfessorRequest): Professor {
-        val disciplinas: MutableList<Disciplina> = disciplinaRepository.findAllById(request.disciplinasIds).toMutableList()
+        val disciplinas: MutableList<Disciplina> =
+            disciplinaRepository.findAllById(request.disciplinasIds.map { UUID.fromString(it) }).toMutableList()
+
         val existente = buscarPorId(id)
 
         val atualizado = existente.copy(

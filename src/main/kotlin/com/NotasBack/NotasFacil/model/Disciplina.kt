@@ -1,6 +1,8 @@
 package com.NotasBack.NotasFacil.model
 
 import com.NotasBack.NotasFacil.Evento
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.util.*
 
@@ -13,11 +15,14 @@ data class Disciplina(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    var professor: Professor, // Disciplina é ministrada por um professor
+    @JsonBackReference
+    var professor: Professor,
 
     @ManyToMany(mappedBy = "disciplinas")
-    val alunos: MutableList<Aluno> = mutableListOf(), // Alunos matriculados
+    @JsonManagedReference
+    val alunos: MutableList<Aluno> = mutableListOf(),
 
     @OneToMany(mappedBy = "disciplina", cascade = [CascadeType.ALL])
-    val eventos: MutableList<Evento> = mutableListOf() // Eventos (provas/atividades) da disciplina
+    @JsonManagedReference
+    val eventos: MutableList<Evento> = mutableListOf()
 )

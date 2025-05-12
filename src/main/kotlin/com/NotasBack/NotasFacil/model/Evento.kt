@@ -2,6 +2,8 @@ package com.NotasBack.NotasFacil
 
 import com.NotasBack.NotasFacil.model.Aluno
 import com.NotasBack.NotasFacil.model.Disciplina
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -21,7 +23,8 @@ data class Evento(
 
     @ManyToOne
     @JoinColumn(name = "disciplina_id")
-    val disciplina: Disciplina, // Evento pertence a uma disciplina
+    @JsonBackReference
+    val disciplina: Disciplina,
 
     @ManyToMany
     @JoinTable(
@@ -29,5 +32,6 @@ data class Evento(
         joinColumns = [JoinColumn(name = "evento_id")],
         inverseJoinColumns = [JoinColumn(name = "aluno_id")]
     )
-    val alunos: MutableList<Aluno> = mutableListOf() // Alunos associados (opcional, se quiser filtrar por aluno)
+    @JsonManagedReference
+    val alunos: MutableList<Aluno> = mutableListOf()
 )

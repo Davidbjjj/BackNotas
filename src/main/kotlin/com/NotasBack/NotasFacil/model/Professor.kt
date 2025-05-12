@@ -1,5 +1,6 @@
-package com.NotasBack.NotasFacil.model;
+package com.NotasBack.NotasFacil.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.util.*
 
@@ -16,8 +17,10 @@ data class Professor(
     val senha: String,
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL])
+    @JsonManagedReference
     val disciplinas: MutableList<Disciplina> = mutableListOf(),
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @JsonManagedReference
     val alunos: List<Aluno> = listOf()
 )

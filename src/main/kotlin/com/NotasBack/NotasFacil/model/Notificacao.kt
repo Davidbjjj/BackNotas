@@ -14,9 +14,11 @@ data class Notificacao(
 
     val mensagem: String,
 
-    val usuarioId: UUID,  
+    val usuarioId: UUID,
 
     val lida: Boolean = false,
 
+    @Column(name = "criada_em") // <-- adiciona o nome da coluna esperada
     val criadaEm: LocalDateTime = LocalDateTime.now()
 )
+

@@ -20,7 +20,7 @@ class NotificacaoService(
     }
 
     fun listarNotificacoes(usuarioId: UUID): List<Notificacao> {
-        return notificacaoRepository.findByUsuarioIdOrderByDataCriacaoDesc(usuarioId)
+        return notificacaoRepository.findByUsuarioIdOrderByCriadaEmDesc(usuarioId)
     }
 
     fun marcarComoLida(id: UUID): Notificacao? {

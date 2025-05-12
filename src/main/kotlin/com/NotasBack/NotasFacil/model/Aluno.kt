@@ -1,6 +1,6 @@
 package com.NotasBack.NotasFacil.model
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 import java.util.*
 
@@ -21,10 +21,12 @@ data class Aluno(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
+    @JsonBackReference
     val professor: Professor? = null,
 
     @ManyToOne
     @JoinColumn(name = "pais_id")
+    @JsonBackReference
     val pais: Pais? = null,
 
     @ManyToMany
@@ -33,5 +35,6 @@ data class Aluno(
         joinColumns = [JoinColumn(name = "aluno_id")],
         inverseJoinColumns = [JoinColumn(name = "disciplina_id")]
     )
-    val disciplinas: MutableList<Disciplina> = mutableListOf() // Disciplinas matriculadas
+    @JsonBackReference
+    val disciplinas: MutableList<Disciplina> = mutableListOf()
 )

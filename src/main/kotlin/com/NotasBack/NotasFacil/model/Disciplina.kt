@@ -14,7 +14,7 @@ data class Disciplina(
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    @JsonBackReference // Evita a serialização recursiva
+    @JsonBackReference
     var professor: Professor,
 
     @ManyToMany(mappedBy = "disciplinas")

@@ -3,14 +3,16 @@ package com.NotasBack.NotasFacil.controller
 import com.NotasBack.NotasFacil.DTO.*
 import com.NotasBack.NotasFacil.model.Disciplina
 import com.NotasBack.NotasFacil.service.DisciplinaService
+import com.NotasBack.NotasFacil.service.NotificacaoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 @RequestMapping("/disciplinas")
-class DisciplinaController(private val service: DisciplinaService) {
+class DisciplinaController(private val service: DisciplinaService,  private val notificacaoService: NotificacaoService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -73,6 +75,21 @@ class DisciplinaController(private val service: DisciplinaService) {
         return service.listarAlunos(disciplinaId).map {
             AlunoResponseDTO(id = it.id, nome = it.nome)
         }
+    }
+    @PostMapping("/{disciplinaId}/notificar")
+    fun notificarAlunos(
+        @PathVariable disciplinaId: UUID,
+        @RequestParam titulo: String,
+        @RequestParam mensagem: String
+    ): ResponseEntity<String> {
+        val alunos = service.listarAlunos(disciplinaId)
+        if (alunos.isEmpty()) return ResponseEntity.badRequest().body("Nenhum aluno matriculado na disciplina.")
+
+        alunos.forEach { aluno ->
+            notificacaoService.criarNotificacao(titulo, mensagem, aluno.id)
+        }
+
+        return ResponseEntity.ok("Notificações enviadas para ${alunos.size} alunos.")
     }
     
     private fun toResponseDTO(disciplina: Disciplina): DisciplinaResponseDTO {

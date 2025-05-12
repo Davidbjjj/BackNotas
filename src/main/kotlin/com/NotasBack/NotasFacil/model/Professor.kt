@@ -17,7 +17,8 @@ data class Professor(
     val senha: String,
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL])
-    @JsonManagedReference
+
+    @JsonManagedReference // Evita a serialização recursiva
     val disciplinas: MutableList<Disciplina> = mutableListOf(),
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)

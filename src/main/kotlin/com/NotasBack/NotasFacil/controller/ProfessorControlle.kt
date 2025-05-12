@@ -45,3 +45,5 @@ class ProfessorController(
         return ResponseEntity.noContent().build()
     }
 }
+
+

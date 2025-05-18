@@ -97,6 +97,12 @@ class DisciplinaController(private val service: DisciplinaService,  private val 
             id = disciplina.id,
             nome = disciplina.nome,
             professorNome = disciplina.professor.nome,
+            escola = disciplina.escola?.nome ?:"Sem escola"
         )
     }
+    @GetMapping("/escola/nome/{nome}")
+    fun listarPorNomeEscola(@PathVariable nome: String): List<DisciplinaResponseDTO> {
+        return service.listarPorNomeEscola(nome).map { toResponseDTO(it) }
+    }
+
 }

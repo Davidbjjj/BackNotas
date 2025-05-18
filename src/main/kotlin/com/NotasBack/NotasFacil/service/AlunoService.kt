@@ -14,13 +14,12 @@ class AlunoService(
     private val professorService: ProfessorService
 ) {
     fun criar(request: AlunoRequest): Aluno {
-        val professor = request.professorId?.let { professorService.buscarPorId(it) }
         val aluno = Aluno(
             nome = request.nome,
             email = request.email,
             senha = PasswordUtils.encode(request.senha),
             notas = request.notas,
-            professor = professor
+
         )
         return repository.save(aluno)
     }
@@ -33,13 +32,11 @@ class AlunoService(
 
     fun atualizar(id: UUID, request: AlunoRequest): Aluno {
         val existente = buscarPorId(id)
-        val professor = request.professorId?.let { professorService.buscarPorId(it) }
         val atualizado = existente.copy(
             nome = request.nome,
             email = request.email,
             senha = PasswordUtils.encode(request.senha),
             notas = request.notas,
-            professor = professor
         )
         return repository.save(atualizado)
     }

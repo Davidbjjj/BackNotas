@@ -6,13 +6,15 @@ import jakarta.validation.constraints.NotNull
 
 data class DisciplinaDTO(
     @field:NotBlank val nome: String,
-    @field:NotNull val professorId: UUID
+    @field:NotNull val professorId: UUID,
+    @field:NotBlank val escola:String
 )
 
 data class DisciplinaResponseDTO(
     val id: UUID,
     val nome: String,
-    val professorNome: String
+    val professorNome: String,
+    val escola: String
 )
 
 data class AlunoResponseDTO(

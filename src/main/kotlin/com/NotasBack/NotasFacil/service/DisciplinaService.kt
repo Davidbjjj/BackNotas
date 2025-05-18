@@ -5,6 +5,7 @@ import com.NotasBack.NotasFacil.model.Disciplina
 import com.NotasBack.NotasFacil.model.Aluno
 import com.NotasBack.NotasFacil.repository.AlunoRepository
 import com.NotasBack.NotasFacil.repository.DisciplinaRepository
+import com.NotasBack.NotasFacil.repository.EscolaRepository
 import com.NotasBack.NotasFacil.repository.ProfessorRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +15,8 @@ import java.util.*
 class DisciplinaService(
     private val disciplinaRepository: DisciplinaRepository,
     private val professorRepository: ProfessorRepository,
-    private val alunoRepository: AlunoRepository
+    private val alunoRepository: AlunoRepository,
+    private val escolaRepository: EscolaRepository
 ) {
 
     // --- CRUD Básico ---
@@ -23,9 +25,13 @@ class DisciplinaService(
         val professor = professorRepository.findById(dto.professorId)
             .orElseThrow { NoSuchElementException("Professor não encontrado") }
 
+        val escola = escolaRepository.findByNome(dto.escola)
+            .orElseThrow { NoSuchElementException("Escola '${dto.escola}' não encontrada") }
+
         val disciplina = Disciplina(
             nome = dto.nome,
-            professor = professor
+            professor = professor,
+            escola = escola
         )
 
         return disciplinaRepository.save(disciplina).also {
@@ -103,4 +109,8 @@ class DisciplinaService(
         val disciplina = buscarPorId(disciplinaId)
         return disciplina.alunos.toList()
     }
+    fun listarPorNomeEscola(nome: String): List<Disciplina> {
+        return disciplinaRepository.findByEscolaNome(nome)
+    }
+
 }

@@ -21,5 +21,10 @@ data class Disciplina(
     val alunos: MutableList<Aluno> = mutableListOf(), // Alunos matriculados
 
     @OneToMany(mappedBy = "disciplina", cascade = [CascadeType.ALL])
-    val eventos: MutableList<Evento> = mutableListOf() // Eventos (provas/atividades) da disciplina
+    val eventos: MutableList<Evento> = mutableListOf(), // Eventos (provas/atividades) da disciplina
+
+    @ManyToOne
+    @JoinColumn(name = "escola_id")
+    val escola: Escola? =null
+
 )

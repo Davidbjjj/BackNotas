@@ -7,5 +7,4 @@ data class AlunoRequest(
     val email: String,
     val senha: String,
     val notas: List<Double> = listOf(),
-    val professorId: UUID? = null // opcional, pode ser nulo
 )

@@ -15,7 +15,7 @@ class SecurityConfig {
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
-            .cors { } // habilita CORS
+            .cors { } // habilita o suporte ao CORS
             .authorizeHttpRequests {
                 it.anyRequest().permitAll()
             }
@@ -25,11 +25,12 @@ class SecurityConfig {
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("*") // permite qualquer origem
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        configuration.allowedHeaders = listOf("*")
-        configuration.allowCredentials = false // true se você quiser permitir envio de cookies
+        val configuration = CorsConfiguration().apply {
+            allowedOrigins = listOf("*") 
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("*")
+            allowCredentials = false
+        }
 
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)

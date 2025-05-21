@@ -18,9 +18,13 @@ data class Escola (
 
     val senha: String,
 
-    val endereco: String
+    val endereco: String,
 
-
-
-
+    @ElementCollection
+    @CollectionTable(name = "escola_emails_permitidos", joinColumns = [JoinColumn(name = "escola_id")])
+    @Column(name = "email_permitido")
+    val emailsPermitidos: MutableSet<String> = mutableSetOf()
 )
+
+
+

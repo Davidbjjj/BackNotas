@@ -1,8 +1,10 @@
 package com.NotasBack.NotasFacil.service
 
 import com.NotasBack.NotasFacil.DTO.DisciplinaDTO
+import com.NotasBack.NotasFacil.DTO.DisciplinaResponseDTO
 import com.NotasBack.NotasFacil.model.Disciplina
 import com.NotasBack.NotasFacil.model.Aluno
+import com.NotasBack.NotasFacil.model.Professor
 import com.NotasBack.NotasFacil.repository.AlunoRepository
 import com.NotasBack.NotasFacil.repository.DisciplinaRepository
 import com.NotasBack.NotasFacil.repository.EscolaRepository
@@ -21,12 +23,16 @@ class DisciplinaService(
 
     // --- CRUD Básico ---
     @Transactional
-    fun criarDisciplina(dto: DisciplinaDTO): Disciplina {
-        val professor = professorRepository.findById(dto.professorId)
-            .orElseThrow { NoSuchElementException("Professor não encontrado") }
+    fun criarDisciplina(dto: DisciplinaDTO): DisciplinaResponseDTO {
+        val professor = professorRepository.findByEmail(dto.professorEmail)
+            .orElseThrow { NoSuchElementException("Professor com e-mail '${dto.professorEmail}' não encontrado") }
 
         val escola = escolaRepository.findByNome(dto.escola)
             .orElseThrow { NoSuchElementException("Escola '${dto.escola}' não encontrada") }
+
+        if (professor.escola?.id != escola.id) {
+            throw IllegalArgumentException("O professor '${professor.nome}' não pertence à escola '${escola.nome}'")
+        }
 
         val disciplina = Disciplina(
             nome = dto.nome,
@@ -34,10 +40,20 @@ class DisciplinaService(
             escola = escola
         )
 
-        return disciplinaRepository.save(disciplina).also {
-            professor.disciplinas.add(it)
-        }
+        val saved = disciplinaRepository.save(disciplina)
+        professor.disciplinas.add(saved) // opcional se for necessário manter bidirecional
+
+        return DisciplinaResponseDTO(
+            id = saved.id,
+            nome = saved.nome,
+            professorNome = saved.professor.nome,
+            professorEmail = saved.professor.email,
+            escola = saved.escola?.nome ?: "Escola não informada"
+
+        )
     }
+
+
 
     fun listarTodas(): List<Disciplina> {
         return disciplinaRepository.findAll()
@@ -62,16 +78,25 @@ class DisciplinaService(
 
     // --- Associações ---
     @Transactional
-    fun associarProfessor(disciplinaId: UUID, professorId: UUID): Disciplina {
-        val disciplina = buscarPorId(disciplinaId)
-        val professor = professorRepository.findById(professorId)
-            .orElseThrow { NoSuchElementException("Professor não encontrado") }
+    fun associarProfessor(disciplinaNome: String, professorEmail: String): Disciplina {
+        val disciplina = disciplinaRepository.findByNome(disciplinaNome)
+            ?: throw NoSuchElementException("Disciplina com nome '$disciplinaNome' não encontrada.")
+
+        val professor = professorRepository.findByEmail(professorEmail)
+            .orElseThrow { NoSuchElementException("Professor com e-mail '$professorEmail' não encontrado.") }
+
+        val disciplinaEscolaId = disciplina.escola?.id
+        val professorEscolaId = professor.escola?.id
+
+        if (disciplinaEscolaId != professorEscolaId) {
+            throw IllegalArgumentException("Professor não pertence à mesma escola da disciplina.")
+        }
 
         disciplina.professor = professor
-        professor.disciplinas.add(disciplina)
-
         return disciplinaRepository.save(disciplina)
     }
+
+
 
     @Transactional
     fun matricularAluno(disciplinaId: UUID, alunoId: UUID): Disciplina {

@@ -22,5 +22,10 @@ data class Professor(
 
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JsonIgnoreProperties("professor", "disciplinas", "pais")
-    val alunos: List<Aluno> = listOf()
+    val alunos: List<Aluno> = listOf(),
+
+    @ManyToOne
+    @JoinColumn(name = "escola_id")
+    val escola: Escola? =null
+
 )

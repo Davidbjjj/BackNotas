@@ -12,22 +12,24 @@ import java.util.*
 
 @RestController
 @RequestMapping("/disciplinas")
-class DisciplinaController(private val service: DisciplinaService,  private val notificacaoService: NotificacaoService) {
+class DisciplinaController(private val disciplinaService: DisciplinaService,  private val notificacaoService: NotificacaoService) {
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun criarDisciplina(@Valid @RequestBody dto: DisciplinaDTO): DisciplinaResponseDTO {
-        return toResponseDTO(service.criarDisciplina(dto))
+        return disciplinaService.criarDisciplina(dto)
     }
+
 
     @GetMapping
     fun listarTodas(): List<DisciplinaResponseDTO> {
-        return service.listarTodas().map { toResponseDTO(it) }
+        return disciplinaService.listarTodas().map { toResponseDTO(it) }
     }
 
     @GetMapping("/{id}")
     fun buscarPorId(@PathVariable id: UUID): DisciplinaResponseDTO {
-        return toResponseDTO(service.buscarPorId(id))
+        return toResponseDTO(disciplinaService.buscarPorId(id))
     }
 
     @PutMapping("/{id}")
@@ -35,30 +37,23 @@ class DisciplinaController(private val service: DisciplinaService,  private val 
         @PathVariable id: UUID,
         @RequestBody dto: DisciplinaDTO
     ): DisciplinaResponseDTO {
-        return toResponseDTO(service.atualizarDisciplina(id, dto))
+        return toResponseDTO(disciplinaService.atualizarDisciplina(id, dto))
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletarDisciplina(@PathVariable id: UUID) {
-        service.deletarDisciplina(id)
+        disciplinaService.deletarDisciplina(id)
     }
 
-    // --- Associações ---
-    @PostMapping("/{disciplinaId}/professor/{professorId}")
-    fun associarProfessor(
-        @PathVariable disciplinaId: UUID,
-        @PathVariable professorId: UUID
-    ): DisciplinaResponseDTO {
-        return toResponseDTO(service.associarProfessor(disciplinaId, professorId))
-    }
+
 
     @PostMapping("/{disciplinaId}/alunos/{alunoId}")
     fun matricularAluno(
         @PathVariable disciplinaId: UUID,
         @PathVariable alunoId: UUID
     ): DisciplinaResponseDTO {
-        return toResponseDTO(service.matricularAluno(disciplinaId, alunoId))
+        return toResponseDTO(disciplinaService.matricularAluno(disciplinaId, alunoId))
     }
 
     @DeleteMapping("/{disciplinaId}/alunos/{alunoId}")
@@ -67,12 +62,12 @@ class DisciplinaController(private val service: DisciplinaService,  private val 
         @PathVariable disciplinaId: UUID,
         @PathVariable alunoId: UUID
     ) {
-        service.desmatricularAluno(disciplinaId, alunoId)
+        disciplinaService.desmatricularAluno(disciplinaId, alunoId)
     }
 
     @GetMapping("/{disciplinaId}/alunos")
     fun listarAlunos(@PathVariable disciplinaId: UUID): List<AlunoResponseDTO> {
-        return service.listarAlunos(disciplinaId).map {
+        return disciplinaService.listarAlunos(disciplinaId).map {
             AlunoResponseDTO(id = it.id, nome = it.nome)
         }
     }
@@ -82,7 +77,7 @@ class DisciplinaController(private val service: DisciplinaService,  private val 
         @RequestParam titulo: String,
         @RequestParam mensagem: String
     ): ResponseEntity<String> {
-        val alunos = service.listarAlunos(disciplinaId)
+        val alunos = disciplinaService.listarAlunos(disciplinaId)
         if (alunos.isEmpty()) return ResponseEntity.badRequest().body("Nenhum aluno matriculado na disciplina.")
 
         alunos.forEach { aluno ->
@@ -97,12 +92,21 @@ class DisciplinaController(private val service: DisciplinaService,  private val 
             id = disciplina.id,
             nome = disciplina.nome,
             professorNome = disciplina.professor.nome,
+            professorEmail = disciplina.professor.email,
             escola = disciplina.escola?.nome ?:"Sem escola"
         )
     }
     @GetMapping("/escola/nome/{nome}")
     fun listarPorNomeEscola(@PathVariable nome: String): List<DisciplinaResponseDTO> {
-        return service.listarPorNomeEscola(nome).map { toResponseDTO(it) }
+        return disciplinaService.listarPorNomeEscola(nome).map { toResponseDTO(it) }
+    }
+    @PostMapping("/{nomeDisciplina}/associar-professor/{emailProfessor}")
+    fun associarProfessor(
+        @PathVariable nomeDisciplina: String,
+        @PathVariable emailProfessor: String
+    ): ResponseEntity<String> {
+        val disciplina = disciplinaService.associarProfessor(nomeDisciplina, emailProfessor)
+        return ResponseEntity.ok("Professor '${disciplina.professor?.nome}' associado à disciplina '${disciplina.nome}' com sucesso.")
     }
 
 }

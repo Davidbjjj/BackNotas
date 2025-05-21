@@ -1,5 +1,6 @@
 package com.NotasBack.NotasFacil.controller
 
+import com.NotasBack.NotasFacil.DTO.DisciplinaResponseDTO
 import com.NotasBack.NotasFacil.DTO.EscolaRequest
 import com.NotasBack.NotasFacil.service.EscolaService
 import org.springframework.http.HttpStatus
@@ -10,23 +11,47 @@ import java.util.*
 @RestController
 @RequestMapping("/escolas")
 class EscolaController (
-    private val service: EscolaService
+    private val escolaService: EscolaService
 ) {
     @PostMapping
-    fun criar (@RequestBody request: EscolaRequest) = ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
+    fun criar (@RequestBody request: EscolaRequest) = ResponseEntity.status(HttpStatus.CREATED).body(escolaService.criar(request))
 
     @GetMapping
-    fun listar() = ResponseEntity.ok(service.listar())
+    fun listar() = ResponseEntity.ok(escolaService.listar())
 
     @GetMapping("/{id}")
-    fun buscar(@PathVariable id: UUID) = ResponseEntity.ok(service.buscarPorId(id))
+    fun buscar(@PathVariable id: UUID) = ResponseEntity.ok(escolaService.buscarPorId(id))
 
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id:UUID, @RequestBody request: EscolaRequest) = ResponseEntity.ok(service.atualizar(id, request))
+    fun atualizar(@PathVariable id:UUID, @RequestBody request: EscolaRequest) = ResponseEntity.ok(escolaService.atualizar(id, request))
 
     @DeleteMapping("/{id}")
     fun deletar(@PathVariable id: UUID): ResponseEntity<Void> {
-        service.deletar(id)
+        escolaService.deletar(id)
         return ResponseEntity.noContent().build()
+    }
+    // Endpoint para adicionar email permitido a uma escola pelo nome da escola
+    @PostMapping("/{nomeEscola}/emails-permitidos")
+    fun adicionarEmailPermitido(
+        @PathVariable nomeEscola: String,
+        @RequestParam email: String
+    ): ResponseEntity<String> {
+        return try {
+            val mensagem =escolaService.adicionarEmailPermitidoEscola(nomeEscola, email)
+            ResponseEntity.ok(mensagem)
+        } catch (ex: NoSuchElementException) {
+            ResponseEntity.badRequest().body(ex.message)
+        } catch (ex: Exception) {
+            ResponseEntity.status(500).body("Erro interno: ${ex.message}")
+        }
+    }
+    // --- Associações ---
+    @PostMapping("/{nome}/associar-professor/{email}")
+    fun associarProfessorAEscola(
+        @PathVariable nome: String,
+        @PathVariable email: String
+    ): ResponseEntity<String> {
+        val mensagem = escolaService.associarProfessorAEscola(nome , email)
+        return ResponseEntity.ok(mensagem)
     }
 }

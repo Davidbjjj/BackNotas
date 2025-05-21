@@ -12,6 +12,7 @@ interface DisciplinaRepository : JpaRepository<Disciplina, UUID> {
     @Query("SELECT d FROM Disciplina d WHERE d.escola.nome = :nomeEscola")
     fun findByEscolaNome(@Param("nomeEscola") nomeEscola: String): List<Disciplina>
     fun findByEscola_Nome(nome: String): List<Disciplina>
+    fun findByNome(nome: String): Disciplina?
 
 
 }

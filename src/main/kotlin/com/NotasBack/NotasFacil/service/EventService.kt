@@ -35,6 +35,12 @@ class EventoService(
 
         return eventoRepository.save(evento)
     }
+    fun listarPorAlunoEmail(alunoEmail: String): List<Evento> {
+        val aluno = alunoRepository.findByEmail(alunoEmail)
+            ?: throw NoSuchElementException("Aluno não encontrado com email: $alunoEmail")
+
+        return eventoRepository.findByAlunosId(aluno.id)
+    }
 
     fun listarPorDisciplina(disciplinaId: UUID): List<Evento> {
         return eventoRepository.findByDisciplinaId(disciplinaId)

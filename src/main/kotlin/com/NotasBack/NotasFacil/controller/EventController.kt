@@ -30,7 +30,10 @@ class EventoController(private val service: EventoService) {
     ): EventoResponseDTO {
         return toResponseDTO(service.adicionarAluno(eventoId, alunoId))
     }
-
+    @GetMapping("/aluno/{alunoEmail}")
+    fun listarPorAluno(@PathVariable alunoEmail: String): List<EventoResponseDTO> {
+        return service.listarPorAlunoEmail(alunoEmail).map { toResponseDTO(it) }
+    }
     // --- Utils ---
     private fun toResponseDTO(evento: Evento): EventoResponseDTO {
         return EventoResponseDTO(

@@ -2,6 +2,7 @@ package com.NotasBack.NotasFacil.repository
 
 
 import com.NotasBack.NotasFacil.Evento
+import com.NotasBack.NotasFacil.model.Aluno
 
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
@@ -15,5 +16,5 @@ interface EventoRepository : JpaRepository<Evento, UUID> {
         fim: LocalDateTime,
         disciplinaId: UUID
     ): List<Evento>
-
+    fun findByAlunosId(alunoId: UUID): List<Evento>
 }

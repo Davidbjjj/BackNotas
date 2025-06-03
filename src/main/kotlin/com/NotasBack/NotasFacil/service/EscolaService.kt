@@ -1,35 +1,48 @@
 package com.NotasBack.NotasFacil.service
 
 import com.NotasBack.NotasFacil.DTO.EscolaRequest
+import com.NotasBack.NotasFacil.DTO.EscolaResponseDTO
 import com.NotasBack.NotasFacil.repository.EscolaRepository
 import com.NotasBack.NotasFacil.model.Escola
 import com.NotasBack.NotasFacil.model.Professor
 import com.NotasBack.NotasFacil.repository.ProfessorRepository
 import jakarta.transaction.Transactional
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 import org.springframework.stereotype.Service
 
 @Service
 class EscolaService(
-    private val repository: EscolaRepository,
+    private val escolaRepository: EscolaRepository,
     private val professorRepository: ProfessorRepository,
-    private val escolaRepository: EscolaRepository
+    private val passwordEncoder: PasswordEncoder
 ) {
-    fun criar(request: EscolaRequest): Escola{
-        val escola = Escola (
+    fun criar(request: EscolaRequest): Escola {
+        val escola = Escola(
             nome = request.nome,
-            senha = PasswordUtils.encode(request.senha),
             email = request.email,
+            senha = passwordEncoder.encode(request.senha),
             endereco = request.endereco
         )
-
-        return repository.save(escola)
-
+        return escolaRepository.save(escola)
     }
 
-    fun listar(): List<Escola> = repository.findAll()
+    fun buscarPorEmail(email: String): Escola? = escolaRepository.findByEmail(email)
 
-    fun buscarPorId(id: UUID): Escola = repository.findById(id).orElseThrow {
+    fun toResponseDTO(escola: Escola): EscolaResponseDTO {
+        return EscolaResponseDTO(
+            nome = escola.nome,
+            email = escola.email,
+            endereco = escola.endereco,
+            emailsPermitidos = escola.emailsPermitidos,
+            professores = escolaRepository.findProfessoresByEscolaId(escola.id)
+                .map { it.nome }
+        )
+    }
+
+    fun listar(): List<Escola> = escolaRepository.findAll()
+
+    fun buscarPorId(id: UUID): Escola = escolaRepository.findById(id).orElseThrow {
         NoSuchElementException ("Escola não encontrada") }
 
     fun atualizar(id: UUID, request: EscolaRequest): Escola {
@@ -40,19 +53,19 @@ class EscolaService(
             senha = PasswordUtils.encode(request.senha),
             endereco = request.endereco
         )
-        return repository.save(atualizado)
+        return escolaRepository.save(atualizado)
     }
 
-    fun deletar(id: UUID) = repository.deleteById(id)
+    fun deletar(id: UUID) = escolaRepository.deleteById(id)
 
     fun associarProfessorAEscola(nome: String, email: String): String {
-        val escola = repository.findByNome(nome)
+        val escola = escolaRepository.findByNome(nome)
             .orElseThrow { NoSuchElementException("Escola com nome $nome não encontrada") }
 
         // Adiciona o e-mail à lista de permitidos, se ainda não estiver presente
         if (!escola.emailsPermitidos.contains(email)) {
             escola.emailsPermitidos.add(email)
-            repository.save(escola)
+            escolaRepository.save(escola)
         }
 
         return "E-mail '$email' foi adicionado à lista de e-mails permitidos da escola '${escola.nome}'."

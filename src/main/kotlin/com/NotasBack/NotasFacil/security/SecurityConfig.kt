@@ -28,7 +28,10 @@ class SecurityConfig(
                     .requestMatchers(
                         "/professores/login",
                         "/professores",
-                        "/alunos",// criação de professor
+                        "/alunos/login",
+                        "/alunos",
+                        "/escolas/login",
+                        "/escolas",// criação de professor
                         "/swagger-ui/**", // se estiver usando Swagger
                         "/v3/api-docs/**" // documentação OpenAPI
                     ).permitAll()

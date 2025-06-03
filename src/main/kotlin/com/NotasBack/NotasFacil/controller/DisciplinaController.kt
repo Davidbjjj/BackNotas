@@ -68,7 +68,13 @@ class DisciplinaController(private val disciplinaService: DisciplinaService,  pr
     @GetMapping("/{disciplinaId}/alunos")
     fun listarAlunos(@PathVariable disciplinaId: UUID): List<AlunoResponseDTO> {
         return disciplinaService.listarAlunos(disciplinaId).map {
-            AlunoResponseDTO(id = it.id, nome = it.nome)
+            AlunoResponseDTO(
+                id = it.id,
+                nome = it.nome,
+                email = it.email,
+                notas = it.notas,
+                disciplinas = it.disciplinas.map { it.nome }
+            )
         }
     }
     @PostMapping("/{disciplinaId}/notificar")

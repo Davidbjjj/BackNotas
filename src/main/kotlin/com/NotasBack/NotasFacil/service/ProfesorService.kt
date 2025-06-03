@@ -6,6 +6,7 @@ import com.NotasBack.NotasFacil.model.Disciplina
 import com.NotasBack.NotasFacil.repository.ProfessorRepository
 import com.NotasBack.NotasFacil.repository.DisciplinaRepository
 import com.NotasBack.NotasFacil.repository.EscolaRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -13,7 +14,8 @@ import java.util.*
 class ProfessorService(
     private val repository: ProfessorRepository,
     private val disciplinaRepository: DisciplinaRepository,
-    private val escolaRepository: EscolaRepository
+    private val escolaRepository: EscolaRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
     fun criar(request: ProfessorRequest): ProfessorResponseDTO {
         val escola = escolaRepository.findByNome(request.escolaNome)
@@ -27,7 +29,7 @@ class ProfessorService(
         val professor = Professor(
             nome = request.nome,
             email = request.email,
-            senha = PasswordUtils.encode(request.senha),
+            senha = passwordEncoder.encode(request.senha),
             escola = escola
         )
 
@@ -61,7 +63,8 @@ class ProfessorService(
 
     fun deletar(id: UUID) {
         repository.deleteById(id)
-    }private fun toResponseDTO(professor: Professor): ProfessorResponseDTO {
+    }
+    fun toResponseDTO(professor: Professor): ProfessorResponseDTO {
         return ProfessorResponseDTO(
             id = professor.id,
             nome = professor.nome,

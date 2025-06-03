@@ -19,7 +19,3 @@ data class DisciplinaResponseDTO(
     val escola: String
 )
 
-data class AlunoResponseDTO(
-    val id: UUID,
-    val nome: String
-)

@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 
 class JwtAuthenticationFilter(
-    private val jwtTokenService: TokenService
+    private val jwtTokenService: JwtTokenService
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -20,35 +20,34 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val token = recuperarToken(request)
-        if (token != null) {
+        val token = getTokenFromRequest(request)
+
+        if (!token.isNullOrEmpty() && jwtTokenService.validateToken(token)) {
             try {
-                val subject = jwtTokenService.validarToken(token)
-                if (subject != null && !jwtTokenService.isTokenRevoked(token)) {
-                    val decodedJWT = JWT.decode(token)
-                    val role = decodedJWT.getClaim("role").asString()
+                val email = jwtTokenService.getEmailFromToken(token)
+                val role = jwtTokenService.getRoleFromToken(token)
 
-                    val authorities = mutableListOf<SimpleGrantedAuthority>()
-                    authorities.add(SimpleGrantedAuthority("ROLE_$role"))
+                val authorities = listOf(SimpleGrantedAuthority(role))
 
-                    val authentication = UsernamePasswordAuthenticationToken(
-                        subject,
-                        null,
-                        authorities
-                    )
-                    SecurityContextHolder.getContext().authentication = authentication
-                }
+                val authentication = UsernamePasswordAuthenticationToken(
+                    email,
+                    null,
+                    authorities
+                )
+
+                SecurityContextHolder.getContext().authentication = authentication
             } catch (e: Exception) {
-                logger.error("Não foi possível autenticar o usuário: ${e.message}")
+                logger.error("Cannot set user authentication: ${e.message}")
             }
         }
+
         filterChain.doFilter(request, response)
     }
 
-    private fun recuperarToken(request: HttpServletRequest): String? {
-        val authHeader = request.getHeader("Authorization")
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7)
+    private fun getTokenFromRequest(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader("Authorization")
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7)
         }
         return null
     }

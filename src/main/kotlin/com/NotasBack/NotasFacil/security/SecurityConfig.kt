@@ -34,7 +34,8 @@ class SecurityConfig(
                         "/swagger-ui/**",
                         "/v3/api-docs/**"
                     ).permitAll()
-                    .requestMatchers("/professores/**").hasRole("PROFESSOR") // Protegendo rotas de professor
+                    .requestMatchers("/professores/**").hasAuthority("PROFESSOR")
+                    .requestMatchers("/escolas/**").hasAuthority("ESCOLA")
                     .anyRequest().authenticated()
             }
             .addFilterBefore(

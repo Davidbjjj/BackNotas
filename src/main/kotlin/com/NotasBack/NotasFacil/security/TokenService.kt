@@ -51,6 +51,7 @@ class TokenService {
             JWT.create()
                 .withIssuer("notas faceis!")
                 .withSubject(escola.email)
+                .withClaim("role", escola.role)
                 .withExpiresAt(generateTokenExpiration())
                 .sign(algorithm)
         } catch (exception: JWTCreationException) {

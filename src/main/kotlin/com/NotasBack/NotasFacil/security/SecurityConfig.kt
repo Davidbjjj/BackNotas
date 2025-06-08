@@ -36,6 +36,7 @@ class SecurityConfig(
                     ).permitAll()
                     .requestMatchers("/professores/**").hasAuthority("PROFESSOR")
                     .requestMatchers("/escolas/**").hasAuthority("ESCOLA")
+                    .requestMatchers("/alunos/**").hasAuthority("ALUNO")
                     .anyRequest().authenticated()
             }
             .addFilterBefore(

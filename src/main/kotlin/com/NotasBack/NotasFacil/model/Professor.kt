@@ -16,6 +16,8 @@ data class Professor(
 
     val senha: String,
 
+    val role: String = "PROFESSOR", // Adicionando a role
+
     @OneToMany(mappedBy = "professor", cascade = [CascadeType.ALL])
     @JsonIgnoreProperties("professor", "alunos", "eventos")
     val disciplinas: MutableList<Disciplina> = mutableListOf(),

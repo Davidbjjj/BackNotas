@@ -69,6 +69,7 @@ class ProfessorService(
             id = professor.id,
             nome = professor.nome,
             email = professor.email,
+            role = professor.role,
             escolaNome = professor.escola?.nome,
             disciplinas = professor.disciplinas.map { it.nome }
         )

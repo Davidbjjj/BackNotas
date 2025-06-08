@@ -24,7 +24,7 @@ class TokenService {
             val algorithm = Algorithm.HMAC256(secret)
             JWT.create()
                 .withIssuer("notas faceis!")
-                .withSubject(professor.email)
+                .withClaim("role", professor.role)
                 .withExpiresAt(generateTokenExpiration())
                 .sign(algorithm)
         } catch (exception: JWTCreationException) {

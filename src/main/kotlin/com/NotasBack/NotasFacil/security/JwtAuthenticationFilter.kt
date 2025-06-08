@@ -1,36 +1,54 @@
 package com.NotasBack.NotasFacil.security
 
+import TokenService
+import com.auth0.jwt.JWT
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 
 class JwtAuthenticationFilter(
-    private val jwtTokenService: JwtTokenService
+    private val jwtTokenService: TokenService
 ) : OncePerRequestFilter() {
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val token = getTokenFromRequest(request)
+        val token = recuperarToken(request)
+        if (token != null) {
+            try {
+                val subject = jwtTokenService.validarToken(token)
+                if (subject != null && !jwtTokenService.isTokenRevoked(token)) {
+                    val decodedJWT = JWT.decode(token)
+                    val role = decodedJWT.getClaim("role").asString()
 
-        if (token != null && jwtTokenService.validateToken(token)) {
-            val email = jwtTokenService.getEmailFromToken(token)
-            val authentication = UsernamePasswordAuthenticationToken(email, null, emptyList())
-            SecurityContextHolder.getContext().authentication = authentication
+                    val authorities = mutableListOf<SimpleGrantedAuthority>()
+                    authorities.add(SimpleGrantedAuthority("ROLE_$role"))
+
+                    val authentication = UsernamePasswordAuthenticationToken(
+                        subject,
+                        null,
+                        authorities
+                    )
+                    SecurityContextHolder.getContext().authentication = authentication
+                }
+            } catch (e: Exception) {
+                logger.error("Não foi possível autenticar o usuário: ${e.message}")
+            }
         }
-
         filterChain.doFilter(request, response)
     }
 
-    private fun getTokenFromRequest(request: HttpServletRequest): String? {
-        val bearerToken = request.getHeader("Authorization")
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7)
+    private fun recuperarToken(request: HttpServletRequest): String? {
+        val authHeader = request.getHeader("Authorization")
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7)
         }
         return null
     }

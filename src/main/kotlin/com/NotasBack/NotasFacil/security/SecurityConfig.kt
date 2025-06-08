@@ -24,21 +24,20 @@ class SecurityConfig(
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    // Permite acesso público a esses endpoints específicos
                     .requestMatchers(
                         "/professores/login",
                         "/professores",
                         "/alunos/login",
                         "/alunos",
                         "/escolas/login",
-                        "/escolas",// criação de professor
-                        "/swagger-ui/**", // se estiver usando Swagger
-                        "/v3/api-docs/**" // documentação OpenAPI
+                        "/escolas",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
                     ).permitAll()
-                    // Exige autenticação para qualquer path que comece com /auth/
-                    .requestMatchers("/auth/**").authenticated()
-                    // Permite todos os outros requests (ou ajuste conforme necessidade)
-                    .anyRequest().permitAll()
+                    .requestMatchers("/professores/**").hasAuthority("PROFESSOR")
+                    .requestMatchers("/escolas/**").hasAuthority("ESCOLA")
+                    .requestMatchers("/alunos/**").hasAuthority("ALUNO")
+                    .anyRequest().authenticated()
             }
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenService),

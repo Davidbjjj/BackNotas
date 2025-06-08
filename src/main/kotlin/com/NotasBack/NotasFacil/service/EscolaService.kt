@@ -34,6 +34,7 @@ class EscolaService(
             nome = escola.nome,
             email = escola.email,
             endereco = escola.endereco,
+            role = escola.role,
             emailsPermitidos = escola.emailsPermitidos,
             professores = escolaRepository.findProfessoresByEscolaId(escola.id)
                 .map { it.nome }

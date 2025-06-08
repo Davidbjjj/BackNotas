@@ -1,9 +1,13 @@
 package com.NotasBack.NotasFacil.service
 
+import TokenService
 import com.NotasBack.NotasFacil.DTO.EscolaLoginRequest
 import com.NotasBack.NotasFacil.DTO.EscolaLoginResponse
-import com.NotasBack.NotasFacil.exception.UnauthorizedException
 import com.NotasBack.NotasFacil.security.JwtTokenService
+
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -11,19 +15,28 @@ import org.springframework.stereotype.Service
 class AuthEscolaService(
     private val escolaService: EscolaService,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtTokenService: JwtTokenService
+    private val jwtTokenService: JwtTokenService,
+    private val authenticationManager: AuthenticationManager
 ) {
-    fun login(loginRequest: EscolaLoginRequest): EscolaLoginResponse {
-        val escola = escolaService.buscarPorEmail(loginRequest.email)
-            ?: throw UnauthorizedException("Email ou senha inválidos")
+    fun login(request: EscolaLoginRequest): EscolaLoginResponse {
+        val authentication: Authentication = authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                request.email,
+                request.senha
+            )
+        )
 
-        if (!passwordEncoder.matches(loginRequest.senha, escola.senha)) {
-            throw UnauthorizedException("Email ou senha inválidos")
+        val escola = escolaService.buscarPorEmail(request.email)
+            ?: throw NoSuchElementException("Escola não encontrada")
+
+        if (!passwordEncoder.matches(request.senha, escola.senha)) {
+            throw IllegalArgumentException("Senha inválida")
         }
 
-        val token = jwtTokenService.generateToken(escola.email)
-        val escolaDTO = escolaService.toResponseDTO(escola)
-
-        return EscolaLoginResponse(token, escolaDTO)
+        val token = jwtTokenService.generateToken(escola.email, escola.role)
+        return EscolaLoginResponse(
+            token = token,
+            escola = escolaService.toResponseDTO(escola)
+        )
     }
 }

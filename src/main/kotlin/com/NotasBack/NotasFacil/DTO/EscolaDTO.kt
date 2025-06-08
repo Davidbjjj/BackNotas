@@ -23,6 +23,7 @@ data class EscolaResponseDTO(
     val nome: String,
     val email: String,
     val endereco: String,
+    val role: String,
     val emailsPermitidos: Set<String>,
-    val professores: List<String> = emptyList()  // Nomes dos professores associados
+    val professores: List<String> = emptyList()
 )

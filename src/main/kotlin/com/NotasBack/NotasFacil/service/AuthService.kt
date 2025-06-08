@@ -25,7 +25,7 @@ class AuthService(
             throw UnauthorizedException("Email ou senha inválidos")
         }
 
-        val token = jwtTokenService.generateToken(professor.email)
+        val token = jwtTokenService.generateToken(professor.email, professor.role)
         val professorDTO = professorService.toResponseDTO(professor)
 
         return LoginResponse(token, professorDTO)

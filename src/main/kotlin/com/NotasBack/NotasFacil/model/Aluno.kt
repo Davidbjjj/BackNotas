@@ -16,6 +16,8 @@ data class Aluno(
 
     val senha: String,
 
+    val role: String = "ALUNO",
+
     @ElementCollection
     val notas: List<Double> = listOf(),
 

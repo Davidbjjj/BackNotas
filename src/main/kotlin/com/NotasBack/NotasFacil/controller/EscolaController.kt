@@ -1,6 +1,5 @@
 package com.NotasBack.NotasFacil.controller
 
-import com.NotasBack.NotasFacil.DTO.DisciplinaResponseDTO
 import com.NotasBack.NotasFacil.DTO.EscolaLoginRequest
 import com.NotasBack.NotasFacil.DTO.EscolaLoginResponse
 import com.NotasBack.NotasFacil.DTO.EscolaRequest

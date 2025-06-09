@@ -27,7 +27,7 @@ class EscolaService(
         return escolaRepository.save(escola)
     }
 
-    fun buscarPorEmail(email: String): Escola? = escolaRepository.findByEmail(email)
+    fun buscarPorEmail(email: String): Optional<Escola> = escolaRepository.findByEmail(email)
 
     fun toResponseDTO(escola: Escola): EscolaResponseDTO {
         return EscolaResponseDTO(
@@ -36,8 +36,7 @@ class EscolaService(
             endereco = escola.endereco,
             role = escola.role,
             emailsPermitidos = escola.emailsPermitidos,
-            professores = escolaRepository.findProfessoresByEscolaId(escola.id)
-                .map { it.nome }
+
         )
     }
 

@@ -19,11 +19,6 @@ class ProfessorController(
     private val authService: AuthService
 
 ) {
-    @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
-        val response = authService.login(request)
-        return ResponseEntity.ok(response)
-    }
 
     @PostMapping
     fun criar(@RequestBody request: ProfessorRequest): ResponseEntity<ProfessorResponseDTO> {

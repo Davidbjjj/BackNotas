@@ -17,11 +17,6 @@ class AlunoController(
     private val authService: AuthAlunoService
 
 ) {
-    @PostMapping("/login")
-    fun login(@RequestBody request: AlunoLoginRequest): ResponseEntity<AlunoLoginResponse> {
-        val response = authService.login(request)
-        return ResponseEntity.ok(response)
-    }
 
     @PostMapping
     fun criar(@RequestBody request: AlunoRequest) =

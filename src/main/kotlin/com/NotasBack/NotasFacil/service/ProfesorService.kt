@@ -48,6 +48,9 @@ class ProfessorService(
         NoSuchElementException("Professor não encontrado")
     }
 
+    fun buscarPorEmail(email: String): Professor = repository.findByEmail(email)
+        .orElseThrow { NoSuchElementException("Professor com email '$email' não encontrado") }
+
     fun atualizar(id: UUID, request: ProfessorRequest): Professor {
 
         val existente = buscarPorId(id)

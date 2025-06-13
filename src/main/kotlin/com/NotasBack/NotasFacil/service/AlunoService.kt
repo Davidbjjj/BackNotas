@@ -30,7 +30,9 @@ class AlunoService(
         NoSuchElementException("Aluno não encontrado")
     }
 
-    fun buscarPorEmail(email: String): Aluno? = repository.findByEmail(email)
+    fun buscarPorEmail(email: String): Aluno = repository.findByEmail(email) ?:
+    throw NoSuchElementException("Aluno com email '$email' não encontrado")
+
 
     fun atualizar(id: UUID, request: AlunoRequest): Aluno {
         val existente = buscarPorId(id)

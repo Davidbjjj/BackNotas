@@ -40,7 +40,19 @@ class EscolaController (
         escolaService.deletar(id)
         return ResponseEntity.noContent().build()
     }
-    // Endpoint para adicionar email permitido a uma escola pelo nome da escola
+    @GetMapping("/email/{email}")
+    fun buscarPorEmail(@PathVariable email: String): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(escolaService.buscarPorEmail(email))
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                mapOf(
+                    "mensagem" to e.message,
+                    "status" to HttpStatus.NOT_FOUND.value()
+                )
+            )
+        }
+    }
     @PostMapping("/{nomeEscola}/emails-permitidos")
     fun adicionarEmailPermitido(
         @PathVariable nomeEscola: String,

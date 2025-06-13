@@ -22,7 +22,17 @@ class AlunoController(
         val response = authService.login(request)
         return ResponseEntity.ok(response)
     }
-
+    @GetMapping("/email/{email}")
+    fun buscarPorEmail(@PathVariable email: String): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(service.buscarPorEmail(email))
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf(
+                "mensagem" to e.message,
+                "status" to HttpStatus.NOT_FOUND.value()
+            ))
+        }
+    }
     @PostMapping
     fun criar(@RequestBody request: AlunoRequest) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))

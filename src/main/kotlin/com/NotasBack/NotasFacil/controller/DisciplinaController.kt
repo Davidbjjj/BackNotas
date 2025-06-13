@@ -73,6 +73,7 @@ class DisciplinaController(private val disciplinaService: DisciplinaService,  pr
                 nome = it.nome,
                 email = it.email,
                 notas = it.notas,
+                role = it.role,
                 disciplinas = it.disciplinas.map { it.nome }
             )
         }

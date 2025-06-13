@@ -9,7 +9,7 @@ import java.util.*
 
 @Repository
 interface EscolaRepository : JpaRepository<Escola, UUID> {
-    fun findByEmail(email: String): Escola?
+    fun findByEmail(email: String): Optional<Escola>
     fun findByNome(nome:String):Optional<Escola>
     @Query("SELECT p FROM Professor p WHERE p.escola.id = :escolaId")
     fun findProfessoresByEscolaId(escolaId: UUID): List<Professor>

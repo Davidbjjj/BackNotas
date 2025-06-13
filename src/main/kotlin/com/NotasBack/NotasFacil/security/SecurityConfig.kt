@@ -2,6 +2,8 @@ package com.NotasBack.NotasFacil.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -16,6 +18,11 @@ class SecurityConfig(
     private val jwtTokenService: JwtTokenService
 ) {
     @Bean
+    fun authenticationManager(http: HttpSecurity): AuthenticationManager {
+        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
+            .build()
+    }
+    @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { csrf -> csrf.disable() }
@@ -24,21 +31,13 @@ class SecurityConfig(
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    // Permite acesso público a esses endpoints específicos
                     .requestMatchers(
-                        "/professores/login",
-                        "/professores",
-                        "/alunos/login",
-                        "/alunos",
-                        "/escolas/login",
-                        "/escolas",// criação de professor
-                        "/swagger-ui/**", // se estiver usando Swagger
-                        "/v3/api-docs/**" // documentação OpenAPI
+                        "/**"
                     ).permitAll()
-                    // Exige autenticação para qualquer path que comece com /auth/
-                    .requestMatchers("/auth/**").authenticated()
-                    // Permite todos os outros requests (ou ajuste conforme necessidade)
-                    .anyRequest().permitAll()
+                    .requestMatchers("/professores/**").hasAuthority("PROFESSOR")
+                    .requestMatchers("/escolas/**").hasAuthority("ESCOLA")
+                    .requestMatchers("/alunos/**").hasAuthority("ALUNO")
+                    .anyRequest().authenticated()
             }
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenService),

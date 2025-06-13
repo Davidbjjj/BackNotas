@@ -27,18 +27,20 @@ class EscolaService(
         return escolaRepository.save(escola)
     }
 
-    fun buscarPorEmail(email: String): Escola = escolaRepository.findByEmail(email)
-        ?: throw NoSuchElementException("Escola com email '$email' não encontrada")
+    fun buscarPorEmail(email: String): Escola {
+        return escolaRepository.findByEmail(email)
+            .orElseThrow { NoSuchElementException("Escola com email '$email' não encontrada") }
+    }
 
     fun toResponseDTO(escola: Escola): EscolaResponseDTO {
         return EscolaResponseDTO(
             nome = escola.nome,
             email = escola.email,
             endereco = escola.endereco,
+            role = escola.role,
             emailsPermitidos = escola.emailsPermitidos,
-            professores = escolaRepository.findProfessoresByEscolaId(escola.id)
-                .map { it.nome }
-        )
+
+            )
     }
 
     fun listar(): List<Escola> = escolaRepository.findAll()

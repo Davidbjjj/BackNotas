@@ -45,13 +45,13 @@ class UserService(
         // Verifica se é uma escola
         escolaRepository.findByEmail(email)?.let { escola ->
             return UserResponse(
-                email = escola.email,
+                email = escola.get().email,
                 tipo = "ESCOLA",
-                id = escola.id,
-                nome = escola.nome,
+                id = escola.get().id,
+                nome = escola.get().nome,
                 detalhes = mapOf(
-                    "endereco" to escola.endereco,
-                    "emailsPermitidos" to escola.emailsPermitidos
+                    "endereco" to escola.get().endereco,
+                    "emailsPermitidos" to escola.get().emailsPermitidos
                 )
             )
         }

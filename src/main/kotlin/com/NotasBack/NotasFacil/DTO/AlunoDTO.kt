@@ -22,6 +22,7 @@ data class AlunoResponseDTO(
     val id: UUID,
     val nome: String,
     val email: String,
+    val role: String,
     val notas: List<Double>,
     val disciplinas: List<String>
 )

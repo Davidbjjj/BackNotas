@@ -54,6 +54,7 @@ class AlunoService(
             id = aluno.id,
             nome = aluno.nome,
             email = aluno.email,
+            role = aluno.role,
             notas = aluno.notas,
             disciplinas = aluno.disciplinas.map { it.nome }
         )

@@ -32,6 +32,7 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(
+                        "/usuarios/email/**",
                         "/**"
                     ).permitAll()
                     .requestMatchers("/professores/**").hasAuthority("PROFESSOR")

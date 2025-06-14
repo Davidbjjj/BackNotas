@@ -14,36 +14,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(
-    private val jwtTokenService: JwtTokenService
-) {
-    @Bean
-    fun authenticationManager(http: HttpSecurity): AuthenticationManager {
-        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
-            .build()
-    }
+class SecurityConfig {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { csrf -> csrf.disable() }
+            .authorizeHttpRequests { auth ->
+                auth
+                    .anyRequest().permitAll() // Todas as rotas são públicas
+            }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers(
-                        "/usuarios/email/**",
-                        "/**"
-                    ).permitAll()
-                    .requestMatchers("/professores/**").hasAuthority("PROFESSOR")
-                    .requestMatchers("/escolas/**").hasAuthority("ESCOLA")
-                    .requestMatchers("/alunos/**").hasAuthority("ALUNO")
-                    .anyRequest().authenticated()
-            }
-            .addFilterBefore(
-                JwtAuthenticationFilter(jwtTokenService),
-                UsernamePasswordAuthenticationFilter::class.java
-            )
 
         return http.build()
     }

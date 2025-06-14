@@ -119,7 +119,7 @@ class AuthService(
         override val nome: String get() = professor.nome
         override val email: String get() = professor.email
         override val senha: String get() = professor.senha
-        override val role: String get() = professor.role
+        override val role: String get() = professor.role ?: "PROFESSOR"
         val escolaNome: String? get() = professor.escola?.nome
         val disciplinasNomes: List<String> get() = professor.disciplinas.map { it.nome }
     }

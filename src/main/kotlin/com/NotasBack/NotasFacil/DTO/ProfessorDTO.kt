@@ -15,7 +15,7 @@ data class ProfessorResponseDTO(
     val id: UUID,
     val nome: String,
     val email: String,
-    val role: String,
+    val role: String?,
     val escolaNome: String?,
     val disciplinas: List<String> = emptyList()
 )
